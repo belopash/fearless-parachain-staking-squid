@@ -1,9 +1,9 @@
 import {UnknownVersionError} from '../../../../../utils/errors'
-import {ParachainStakingSelectedCandidatesStorage} from '../../../types/storage'
-import {Block, ChainContext} from '../../../types/support'
+import {parachainStaking} from '../../../types/storage'
+import {BatchContext, BlockHeader} from '../../../../fields'
 
 export const SelectedCandidates = {
-    async get(ctx: ChainContext, block: Block): Promise<Uint8Array[] | undefined> {
+    async get(ctx: BatchContext, block: BlockHeader): Promise<Uint8Array[] | undefined> {
         const psscs = new ParachainStakingSelectedCandidatesStorage(ctx, block)
         if (!psscs.isExists) return undefined
 

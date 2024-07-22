@@ -5,27 +5,28 @@ import {Candidate, Delegator, RoundData, processRounds} from '../../core/round'
 import {StakingData, processStaking} from '../../core/staking'
 import {encodeAddress, ParachainStaking} from './api'
 import config from './config'
-
-const DEFAULT_SELECTION = {event: {args: true}} as const
+import {DEFAULT_SELECTION} from '../fields'
 
 const database = new TypeormDatabase()
 const processor = new SubstrateBatchProcessor()
-    .setDataSource(config.dataSource)
-    .addEvent('ParachainStaking.NewRound', {data: DEFAULT_SELECTION})
-    .addEvent('ParachainStaking.Rewarded', {data: DEFAULT_SELECTION})
-    .addEvent('ParachainStaking.CollatorBondedLess', {data: DEFAULT_SELECTION})
-    .addEvent('ParachainStaking.CandidateBondedLess', {data: DEFAULT_SELECTION})
-    .addEvent('ParachainStaking.CollatorBondedMore', {data: DEFAULT_SELECTION})
-    .addEvent('ParachainStaking.CandidateBondedMore', {data: DEFAULT_SELECTION})
-    .addEvent('ParachainStaking.Nomination', {data: DEFAULT_SELECTION})
-    .addEvent('ParachainStaking.Delegation', {data: DEFAULT_SELECTION})
-    .addEvent('ParachainStaking.NominationIncreased', {data: DEFAULT_SELECTION})
-    .addEvent('ParachainStaking.DelegationIncreased', {data: DEFAULT_SELECTION})
-    .addEvent('ParachainStaking.NominationDecreased', {data: DEFAULT_SELECTION})
-    .addEvent('ParachainStaking.DelegationDecreased', {data: DEFAULT_SELECTION})
-    .addEvent('ParachainStaking.DelegationRevoked', {data: DEFAULT_SELECTION})
-    .addEvent('ParachainStaking.Compounded', {data: DEFAULT_SELECTION})
-    .addEvent('ParachainStaking.JoinedCollatorCandidates', {data: DEFAULT_SELECTION})
+    .setGateway(config.gateway)
+    .setRpcEndpoint(config.chain)
+    .addEvent({name: ['ParachainStaking.NewRound']})
+    .addEvent({name: ['ParachainStaking.Rewarded']})
+    .addEvent({name: ['ParachainStaking.CollatorBondedLess']})
+    .addEvent({name: ['ParachainStaking.CandidateBondedLess']})
+    .addEvent({name: ['ParachainStaking.CollatorBondedMore']})
+    .addEvent({name: ['ParachainStaking.CandidateBondedMore']})
+    .addEvent({name: ['ParachainStaking.Nomination']})
+    .addEvent({name: ['ParachainStaking.Delegation']})
+    .addEvent({name: ['ParachainStaking.NominationIncreased']})
+    .addEvent({name: ['ParachainStaking.DelegationIncreased']})
+    .addEvent({name: ['ParachainStaking.NominationDecreased']})
+    .addEvent({name: ['ParachainStaking.DelegationDecreased']})
+    .addEvent({name: ['ParachainStaking.DelegationRevoked']})
+    .addEvent({name: ['ParachainStaking.Compounded']})
+    .addEvent({name: ['ParachainStaking.JoinedCollatorCandidates']})
+    .setFields(DEFAULT_SELECTION)
 
 processor.run(database, async (ctx) => {
     const roundsData = await getRoundsData(ctx)

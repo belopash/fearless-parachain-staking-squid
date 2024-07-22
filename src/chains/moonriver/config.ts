@@ -1,9 +1,10 @@
 const config = {
     chainName: 'moonriver',
     prefix: '',
-    dataSource: {
-        archive: 'https://moonriver.archive.subsquid.io/graphql',
-        chain: process.env.MOONRIVER_CHAIN_NODE || 'wss://wss.api.moonriver.moonbeam.network',
+    gateway: 'https://v2.archive.subsquid.io/network/moonriver-substrate',
+    chain: {
+        url: process.env.MOONRIVER_CHAIN_NODE || 'wss://wss.api.moonriver.moonbeam.network',
+        rateLimit: 10,
     },
 }
 

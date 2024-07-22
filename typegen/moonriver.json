@@ -1,48 +1,55 @@
 {
   "outDir": "../src/chains/moonriver/types/",
-  "specVersions": "https://moonriver.archive.subsquid.io/graphql",
-  "events": [
-    "Balances.Transfer",
-    "ParachainStaking.CandidateBondedLess",
-    "ParachainStaking.CandidateBondedMore",
-    "ParachainStaking.CandidateLeft",
-    "ParachainStaking.CollatorBondedLess",
-    "ParachainStaking.CollatorBondedMore",
-    "ParachainStaking.CollatorLeft",
-    "ParachainStaking.Delegation",
-    "ParachainStaking.DelegationDecreased",
-    "ParachainStaking.DelegationIncreased",
-    "ParachainStaking.DelegationRevoked",
-    "ParachainStaking.DelegatorLeft",
-    "ParachainStaking.DelegatorLeftCandidate",
-    "ParachainStaking.JoinedCollatorCandidates",
-    "ParachainStaking.NewRound",
-    "ParachainStaking.Nomination",
-    "ParachainStaking.NominationDecreased",
-    "ParachainStaking.NominationIncreased",
-    "ParachainStaking.NominatorLeft",
-    "ParachainStaking.NominatorLeftCollator",
-    "ParachainStaking.Rewarded",
-    "ParachainStaking.Compounded",
-    "ParachainStaking.JoinedCollatorCandidates"
-  ],
-  "calls": [],
-  "storage": [
-    "ParachainStaking.NominatorState",
-    "ParachainStaking.NominatorState2",
-    "ParachainStaking.DelegatorState",
-    "ParachainStaking.BottomDelegations",
-    "ParachainStaking.CandidateInfo",
-    "ParachainStaking.CandidateState",
-    "ParachainStaking.CollatorState",
-    "ParachainStaking.CollatorState2",
-    "ParachainStaking.DelegatorState",
-    "ParachainStaking.SelectedCandidates",
-    "ParachainStaking.TopDelegations",
-    "ParachainStaking.Round",
-    "ParachainStaking.CollatorCommission"
-  ],
-  "constants": [
-    "ParachainStaking.RewardPaymentDelay"
-  ]
+  "specVersions": "https://v2.archive.subsquid.io/metadata/moonriver",
+  "pallets": {
+    "Balances": {
+      "events": [
+        "Tranfer"
+      ]
+    },
+    "ParachainStaking": {
+      "events": [
+        "CandidateBondedLess",
+        "CandidateBondedMore",
+        "CandidateLeft",
+        "CollatorBondedLess",
+        "CollatorBondedMore",
+        "CollatorLeft",
+        "Delegation",
+        "DelegationDecreased",
+        "DelegationIncreased",
+        "DelegationRevoked",
+        "DelegatorLeft",
+        "DelegatorLeftCandidate",
+        "JoinedCollatorCandidates",
+        "NewRound",
+        "Nomination",
+        "NominationDecreased",
+        "NominationIncreased",
+        "NominatorLeft",
+        "NominatorLeftCollator",
+        "Rewarded",
+        "Compounded",
+        "JoinedCollatorCandidates"
+      ],
+      "storage": [
+        "NominatorState",
+        "NominatorState2",
+        "DelegatorState",
+        "BottomDelegations",
+        "CandidateInfo",
+        "CandidateState",
+        "CollatorState",
+        "CollatorState2",
+        "DelegatorState",
+        "SelectedCandidates",
+        "TopDelegations",
+        "Round",
+        "CollatorCommission"
+      ],
+      "constants": [
+        "RewardPaymentDelay"
+      ]
+    }
+  }
 }

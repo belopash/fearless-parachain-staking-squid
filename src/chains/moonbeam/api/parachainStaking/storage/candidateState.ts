@@ -1,21 +1,16 @@
 import {assertNotNull} from '@subsquid/substrate-processor'
 import assert from 'assert'
 import {UnknownVersionError} from '../../../../../utils/errors'
-import {
-    ParachainStakingBottomDelegationsStorage,
-    ParachainStakingCandidateInfoStorage,
-    ParachainStakingCandidateStateStorage,
-    ParachainStakingTopDelegationsStorage,
-    ParachainStakingCollatorState2Storage,
-} from '../../../types/storage'
-import {Block, ChainContext} from '../../../types/support'
+import {parachainStaking} from '../../../types/storage'
+import {BatchContext, BlockHeader} from '../../../../fields'
 
 export const CandidateInfo = {
     async getMany(
-        ctx: ChainContext,
-        block: Block,
-        addresses: Uint8Array[]
+        ctx: BatchContext,
+        block: BlockHeader,
+        addresses: string[]
     ): Promise<(ParachainStaking.CandidateState | undefined)[] | undefined> {
+        //parachainStaking.candidateInfo.v1201.is(block)
         const pscis = new ParachainStakingCandidateInfoStorage(ctx, block)
         if (!pscis.isExists) return CandidateState.getMany(ctx, block, addresses)
 
@@ -77,9 +72,9 @@ export const CandidateInfo = {
  */
 export const CandidateState = {
     async getMany(
-        ctx: ChainContext,
-        block: Block,
-        addresses: Uint8Array[]
+        ctx: BatchContext,
+        block: BlockHeader,
+        addresses: string[]
     ): Promise<(ParachainStaking.CandidateState | undefined)[] | undefined> {
         const pscss = new ParachainStakingCandidateStateStorage(ctx, block)
         if (!pscss.isExists) return CollatorState2.getMany(ctx, block, addresses)
@@ -100,9 +95,9 @@ export const CandidateState = {
  */
 export const CollatorState2 = {
     async getMany(
-        ctx: ChainContext,
-        block: Block,
-        addresses: Uint8Array[]
+        ctx: BatchContext,
+        block: BlockHeader,
+        addresses: string[]
     ): Promise<(ParachainStaking.CandidateState | undefined)[] | undefined> {
         const pscs2s = new ParachainStakingCollatorState2Storage(ctx, block)
         if (!pscs2s.isExists) return undefined

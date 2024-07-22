@@ -1,22 +1,6 @@
 import {UnknownVersionError} from '../../../../utils/errors'
 import {ParachainStakingCompoundedEvent} from '../../../moonbeam/types/events'
-import {
-    ParachainStakingCandidateBondedLessEvent,
-    ParachainStakingCandidateBondedMoreEvent,
-    ParachainStakingCollatorBondedLessEvent,
-    ParachainStakingCollatorBondedMoreEvent,
-    ParachainStakingDelegationDecreasedEvent,
-    ParachainStakingDelegationEvent,
-    ParachainStakingDelegationIncreasedEvent,
-    ParachainStakingDelegationRevokedEvent,
-    ParachainStakingJoinedCollatorCandidatesEvent,
-    ParachainStakingNewRoundEvent,
-    ParachainStakingNominationDecreasedEvent,
-    ParachainStakingNominationEvent,
-    ParachainStakingNominationIncreasedEvent,
-    ParachainStakingRewardedEvent,
-} from '../../types/events'
-import {ChainContext, Event} from '../../types/support'
+import {parachainStaking} from '../../types/events'
 
 export const NewRound = {
     names: {'ParachainStaking.NewRound': true} as const,

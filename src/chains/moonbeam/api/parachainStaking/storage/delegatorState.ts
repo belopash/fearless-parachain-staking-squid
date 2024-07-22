@@ -1,12 +1,12 @@
 import {UnknownVersionError} from '../../../../../utils/errors'
-import {ParachainStakingDelegatorStateStorage, ParachainStakingNominatorState2Storage} from '../../../types/storage'
-import {Block, ChainContext} from '../../../types/support'
+import {parachainStaking} from '../../../types/storage'
+import {BatchContext, BlockHeader} from '../../../../fields'
 
 export const DelegatorState = {
     async getMany(
-        ctx: ChainContext,
-        block: Block,
-        addresses: Uint8Array[]
+        ctx: BatchContext,
+        block: BlockHeader,
+        addresses: string[]
     ): Promise<(ParachainStaking.DelegatorState | undefined)[] | undefined> {
         const pscss = new ParachainStakingDelegatorStateStorage(ctx, block)
         if (!pscss.isExists) return NominatorState2.getMany(ctx, block, addresses)
@@ -29,9 +29,9 @@ export const DelegatorState = {
  */
 export const NominatorState2 = {
     async getMany(
-        ctx: ChainContext,
-        block: Block,
-        addresses: Uint8Array[]
+        ctx: BatchContext,
+        block: BlockHeader,
+        addresses: string[]
     ): Promise<(ParachainStaking.DelegatorState | undefined)[] | undefined> {
         const pscs2s = new ParachainStakingNominatorState2Storage(ctx, block)
         if (!pscs2s.isExists) return undefined

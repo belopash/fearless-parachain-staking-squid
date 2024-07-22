@@ -1,9 +1,9 @@
 import {UnknownVersionError} from '../../../../../utils/errors'
-import {ParachainStakingCollatorCommissionStorage, ParachainStakingRoundStorage} from '../../../types/storage'
-import {ChainContext, Block} from '../../../types/support'
+import {parachainStaking} from '../../../types/storage'
+import {BatchContext, BlockHeader} from '../../../../fields'
 
 export const Round = {
-    async get(ctx: ChainContext, block: Block): Promise<ParachainStaking.Round | undefined> {
+    async get(ctx: BatchContext, block: BlockHeader): Promise<ParachainStaking.Round | undefined> {
         const psrs = new ParachainStakingRoundStorage(ctx, block)
         if (!psrs.isExists) return undefined
 
@@ -16,7 +16,7 @@ export const Round = {
 }
 
 export const CollatorComission = {
-    async get(ctx: ChainContext, block: Block): Promise<number | undefined> {
+    async get(ctx: BatchContext, block: BlockHeader): Promise<number | undefined> {
         const psrs = new ParachainStakingCollatorCommissionStorage(ctx, block)
         if (!psrs.isExists) return undefined
 

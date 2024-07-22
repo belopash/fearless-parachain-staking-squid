@@ -1,146 +1,133 @@
 import {UnknownVersionError} from '../../../../utils/errors'
-import {
-    ParachainStakingCandidateBondedLessEvent,
-    ParachainStakingCandidateBondedMoreEvent,
-    ParachainStakingCollatorBondedLessEvent,
-    ParachainStakingCollatorBondedMoreEvent,
-    ParachainStakingCompoundedEvent,
-    ParachainStakingDelegationDecreasedEvent,
-    ParachainStakingDelegationEvent,
-    ParachainStakingDelegationIncreasedEvent,
-    ParachainStakingDelegationRevokedEvent,
-    ParachainStakingJoinedCollatorCandidatesEvent,
-    ParachainStakingNewRoundEvent,
-    ParachainStakingNominationDecreasedEvent,
-    ParachainStakingNominationEvent,
-    ParachainStakingNominationIncreasedEvent,
-    ParachainStakingRewardedEvent,
-} from '../../types/events'
-import {ChainContext, Event} from '../../types/support'
+import {parachainStaking} from '../../types/events'
+import {Event} from '../../../fields'
 
 export const NewRound = {
     names: {'ParachainStaking.NewRound': true} as const,
-    decode(ctx: ChainContext, event: Event): ParachainStaking.NewRound {
-        const e = new ParachainStakingNewRoundEvent(ctx, event)
-        if (e.isV900) {
-            const [startingBlock, round, selectedCollatorsNumber, totalBalance] = e.asV900
+    decode(event: Event): ParachainStaking.NewRound {
+        if (parachainStaking.newRound.v900.is(event)) {
+            const [startingBlock, round, selectedCollatorsNumber, totalBalance] =
+                parachainStaking.newRound.v900.decode(event)
             return {startingBlock, round, selectedCollatorsNumber, totalBalance}
-        } else if (e.isV1300) {
-            return e.asV1300
+        } else if (parachainStaking.newRound.v1300.is(event)) {
+            return parachainStaking.newRound.v1300.decode(event)
         } else {
-            throw new UnknownVersionError(e)
+            throw new UnknownVersionError(event)
         }
     },
 }
 
 export const JoinedCollatorCandidates = {
     names: {'ParachainStaking.JoinedCollatorCandidates': true} as const,
-    decode(ctx: ChainContext, event: Event): ParachainStaking.CandidateBondedMore {
-        const e = new ParachainStakingJoinedCollatorCandidatesEvent(ctx, event)
-        if (e.isV900) {
-            const [account, amount, newTotal] = e.asV900
+    decode(event: Event): ParachainStaking.CandidateBondedMore {
+        if (parachainStaking.joinedCollatorCandidates.v900.is(event)) {
+            const [account, amount, newTotal] =
+                parachainStaking.joinedCollatorCandidates.v900.decode(event)
             return {
                 account,
                 amount,
                 newTotal,
             }
-        } else if (e.isV1300) {
-            const {account, amountLocked, newTotalAmtLocked} = e.asV1300
+        } else if (parachainStaking.joinedCollatorCandidates.v1300.is(event)) {
+            const {account, amountLocked, newTotalAmtLocked} =
+                parachainStaking.joinedCollatorCandidates.v1300.decode(event)
             return {
                 account,
                 amount: amountLocked,
                 newTotal: newTotalAmtLocked,
             }
         } else {
-            throw new UnknownVersionError(e)
+            throw new UnknownVersionError(event)
         }
     },
 }
 
 export const CollatorBondedLess = {
     names: {'ParachainStaking.CollatorBondedLess': true} as const,
-    decode(ctx: ChainContext, event: Event): ParachainStaking.CandidateBondedLess {
-        const e = new ParachainStakingCollatorBondedLessEvent(ctx, event)
-        if (e.isV900) {
-            const [account, amount, newTotal] = e.asV900
+    decode(event: Event): ParachainStaking.CandidateBondedLess {
+        if (parachainStaking.collatorBondedLess.v900.is(event)) {
+            const [account, amount, newTotal] =
+                parachainStaking.collatorBondedLess.v900.decode(event)
             return {
                 account,
                 amount,
                 newTotal,
             }
         } else {
-            throw new UnknownVersionError(e)
+            throw new UnknownVersionError(event)
         }
     },
 }
 
 export const CandidateBondedLess = {
     names: {'ParachainStaking.CandidateBondedLess': true, ...CollatorBondedLess.names} as const,
-    decode(ctx: ChainContext, event: Event): ParachainStaking.CandidateBondedLess {
+    decode(event: Event): ParachainStaking.CandidateBondedLess {
         if (event.name in CollatorBondedLess.names) {
-            return CollatorBondedLess.decode(ctx, event)
+            return CollatorBondedLess.decode(event)
         } else {
-            const e = new ParachainStakingCandidateBondedLessEvent(ctx, event)
-            if (e.isV1001) {
-                const [account, amount, newTotal] = e.asV1001
+            if (parachainStaking.candidateBondedLess.v1001.is(event)) {
+                const [account, amount, newTotal] =
+                    parachainStaking.candidateBondedLess.v1001.decode(event)
                 return {
                     account,
                     amount,
                     newTotal,
                 }
-            } else if (e.isV1300) {
-                const {candidate: account, amount, newBond: newTotal} = e.asV1300
+            } else if (parachainStaking.candidateBondedLess.v1300.is(event)) {
+                const {candidate: account, amount, newBond: newTotal} =
+                    parachainStaking.candidateBondedLess.v1300.decode(event)
                 return {
                     account,
                     amount,
                     newTotal,
                 }
             }
-            throw new UnknownVersionError(e)
+            throw new UnknownVersionError(event)
         }
     },
 } as const
 
 export const CollatorBondedMore = {
     names: {'ParachainStaking.CollatorBondedMore': true} as const,
-    decode(ctx: ChainContext, event: Event): ParachainStaking.CandidateBondedLess {
-        const e = new ParachainStakingCollatorBondedMoreEvent(ctx, event)
-        if (e.isV900) {
-            const [account, amount, newTotal] = e.asV900
+    decode(event: Event): ParachainStaking.CandidateBondedLess {
+        if (parachainStaking.collatorBondedMore.v900.is(event)) {
+            const [account, amount, newTotal] =
+                parachainStaking.collatorBondedMore.v900.decode(event)
             return {
                 account,
                 amount,
                 newTotal,
             }
         } else {
-            throw new UnknownVersionError(e)
+            throw new UnknownVersionError(event)
         }
     },
 }
 
 export const CandidateBondedMore = {
     names: {'ParachainStaking.CandidateBondedMore': true, ...CollatorBondedMore.names} as const,
-    decode(ctx: ChainContext, event: Event): ParachainStaking.CandidateBondedLess {
+    decode(event: Event): ParachainStaking.CandidateBondedLess {
         if (event.name in CollatorBondedMore.names) {
-            return CollatorBondedMore.decode(ctx, event)
+            return CollatorBondedMore.decode(event)
         } else {
-            const e = new ParachainStakingCandidateBondedMoreEvent(ctx, event)
-            if (e.isV1001) {
-                const [account, amount, newTotal] = e.asV1001
+            if (parachainStaking.candidateBondedMore.v1001.is(event)) {
+                const [account, amount, newTotal] =
+                    parachainStaking.candidateBondedMore.v1001.decode(event)
                 return {
                     account,
                     amount,
                     newTotal,
                 }
-            } else if (e.isV1300) {
-                const {candidate: account, amount, newTotalBond: newTotal} = e.asV1300
+            } else if (parachainStaking.candidateBondedMore.v1300.is(event)) {
+                const {candidate: account, amount, newTotalBond: newTotal} =
+                    parachainStaking.candidateBondedMore.v1300.decode(event)
                 return {
                     account,
                     amount,
                     newTotal,
                 }
             } else {
-                throw new UnknownVersionError(e)
+                throw new UnknownVersionError(event)
             }
         }
     },
@@ -148,51 +135,53 @@ export const CandidateBondedMore = {
 
 export const Nomination = {
     names: {'ParachainStaking.Nomination': true} as const,
-    decode(ctx: ChainContext, event: Event): ParachainStaking.DelegationIncreased {
-        const e = new ParachainStakingNominationEvent(ctx, event)
-        if (e.isV900) {
-            const [account, amount, candidate] = e.asV900
+    decode(event: Event): ParachainStaking.DelegationIncreased {
+        if (parachainStaking.nomination.v900.is(event)) {
+            const [account, amount, candidate] =
+                parachainStaking.nomination.v900.decode(event)
             return {
                 account,
                 amount,
                 candidate,
             }
         } else {
-            throw new UnknownVersionError(e)
+            throw new UnknownVersionError(event)
         }
     },
 }
 
 export const Delegation = {
     names: {'ParachainStaking.Delegation': true, ...Nomination.names} as const,
-    decode(ctx: ChainContext, event: Event): ParachainStaking.DelegationIncreased {
+    decode(event: Event): ParachainStaking.DelegationIncreased {
         if (event.name in Nomination.names) {
-            return Nomination.decode(ctx, event)
+            return Nomination.decode(event)
         } else {
-            const e = new ParachainStakingDelegationEvent(ctx, event)
-            if (e.isV1001) {
-                const [account, amount, candidate] = e.asV1001
+            if (parachainStaking.delegation.v1001.is(event)) {
+                const [account, amount, candidate] =
+                    parachainStaking.delegation.v1001.decode(event)
                 return {
                     account,
                     amount,
                     candidate,
                 }
-            } else if (e.isV1300) {
-                const {delegator: account, lockedAmount: amount, candidate} = e.asV1300
+            } else if (parachainStaking.delegation.v1300.is(event)) {
+                const {delegator: account, lockedAmount: amount, candidate} =
+                    parachainStaking.delegation.v1300.decode(event)
                 return {
                     account,
                     amount,
                     candidate,
                 }
-            } else if (e.isV1901) {
-                const {delegator: account, lockedAmount: amount, candidate} = e.asV1901
+            } else if (parachainStaking.delegation.v1901.is(event)) {
+                const {delegator: account, lockedAmount: amount, candidate} =
+                    parachainStaking.delegation.v1901.decode(event)
                 return {
                     account,
                     amount,
                     candidate,
                 }
             } else {
-                throw new UnknownVersionError(e)
+                throw new UnknownVersionError(event)
             }
         }
     },
@@ -200,90 +189,90 @@ export const Delegation = {
 
 export const NominationIncreased = {
     names: {'ParachainStaking.NominationIncreased': true} as const,
-    decode(ctx: ChainContext, event: Event): ParachainStaking.DelegationIncreased {
-        const e = new ParachainStakingNominationIncreasedEvent(ctx, event)
-
-        if (e.isV900) {
-            const [account, candidate, amount] = e.asV900
+    decode(event: Event): ParachainStaking.DelegationIncreased {
+        if (parachainStaking.nominationIncreased.v900.is(event)) {
+            const [account, candidate, amount] =
+                parachainStaking.nominationIncreased.v900.decode(event)
             return {
                 account,
                 amount,
                 candidate,
             }
         } else {
-            throw new UnknownVersionError(e)
+            throw new UnknownVersionError(event)
         }
     },
 }
 
 export const DelegationIncreased = {
     names: {'ParachainStaking.DelegationIncreased': true, ...NominationIncreased.names} as const,
-    decode(ctx: ChainContext, event: Event): ParachainStaking.DelegationIncreased {
+    decode(event: Event): ParachainStaking.DelegationIncreased {
         if (event.name in NominationIncreased.names) {
-            return NominationIncreased.decode(ctx, event)
+            return NominationIncreased.decode(event)
         } else {
-            const e = new ParachainStakingDelegationIncreasedEvent(ctx, event)
-
-            if (e.isV1001) {
-                const [account, candidate, amount] = e.asV1001
+            if (parachainStaking.delegationIncreased.v1001.is(event)) {
+                const [account, candidate, amount] =
+                    parachainStaking.delegationIncreased.v1001.decode(event)
                 return {
                     account,
                     amount,
                     candidate,
                 }
-            } else if (e.isV1300) {
-                const {delegator: account, amount: amount, candidate} = e.asV1300
+            } else if (parachainStaking.delegationIncreased.v1300.is(event)) {
+                const {delegator: account, amount: amount, candidate} =
+                    parachainStaking.delegationIncreased.v1300.decode(event)
                 return {
                     account,
                     amount,
                     candidate,
                 }
             }
-            throw new UnknownVersionError(e)
+            throw new UnknownVersionError(event)
         }
     },
 }
 
 export const NominationDecreased = {
     names: {'ParachainStaking.NominationDecreased': true} as const,
-    decode(ctx: ChainContext, event: Event): ParachainStaking.DelegationDecreased {
-        const e = new ParachainStakingNominationDecreasedEvent(ctx, event)
-        if (e.isV900) {
-            const [account, candidate, amount] = e.asV900
+    decode(event: Event): ParachainStaking.DelegationDecreased {
+        if (parachainStaking.nominationDecreased.v900.is(event)) {
+            const [account, candidate, amount] =
+                parachainStaking.nominationDecreased.v900.decode(event)
             return {
                 account,
                 amount,
                 candidate,
             }
         } else {
-            throw new UnknownVersionError(e)
+            throw new UnknownVersionError(event)
         }
     },
 }
 
 export const DelegationDecreased = {
     names: {'ParachainStaking.DelegationDecreased': true, ...NominationDecreased.names} as const,
-    decode(ctx: ChainContext, event: Event): ParachainStaking.DelegationDecreased {
+    decode(event: Event): ParachainStaking.DelegationDecreased {
         if (event.name in NominationDecreased.names) {
-            return NominationDecreased.decode(ctx, event)
+            return NominationDecreased.decode(event)
         } else {
-            const e = new ParachainStakingDelegationDecreasedEvent(ctx, event)
-            if (e.isV1001) {
-                const [account, candidate, amount] = e.asV1001
+            if (parachainStaking.delegationDecreased.v1001.is(event)) {
+                const [account, candidate, amount] =
+                    parachainStaking.delegationDecreased.v1001.decode(event)
                 return {
                     account,
                     amount,
                     candidate,
                 }
-            } else if (e.isV1300) {
-                const {delegator: account, amount: amount, candidate} = e.asV1300
+            } else if (parachainStaking.delegationDecreased.v1300.is(event)) {
+                const {delegator: account, amount: amount, candidate} =
+                    parachainStaking.delegationDecreased.v1300.decode(event)
                 return {
                     account,
                     amount,
                     candidate,
                 }
             } else {
-                throw new UnknownVersionError(e)
+                throw new UnknownVersionError(event)
             }
         }
     },
@@ -291,60 +280,62 @@ export const DelegationDecreased = {
 
 export const DelegationRevoked = {
     names: {'ParachainStaking.DelegationRevoked': true} as const,
-    decode(ctx: ChainContext, event: Event): ParachainStaking.DelegationDecreased {
-        const e = new ParachainStakingDelegationRevokedEvent(ctx, event)
-        if (e.isV1001) {
-            const [account, candidate, amount] = e.asV1001
+    decode(event: Event): ParachainStaking.DelegationDecreased {
+        if (parachainStaking.delegationRevoked.v1001.is(event)) {
+            const [account, candidate, amount] =
+                parachainStaking.delegationRevoked.v1001.decode(event)
             return {
                 account,
                 amount,
                 candidate,
             }
-        } else if (e.isV1300) {
-            const {delegator: account, unstakedAmount: amount, candidate} = e.asV1300
+        } else if (parachainStaking.delegationRevoked.v1300.is(event)) {
+            const {delegator: account, unstakedAmount: amount, candidate} =
+                parachainStaking.delegationRevoked.v1300.decode(event)
             return {
                 account,
                 amount,
                 candidate,
             }
         }
-        throw new UnknownVersionError(e)
+        throw new UnknownVersionError(event)
     },
 }
 
 export const Rewarded = {
     names: {'ParachainStaking.Rewarded': true} as const,
-    decode(ctx: ChainContext, event: Event) {
-        const e = new ParachainStakingRewardedEvent(ctx, event)
-        if (e.isV900) {
-            const [account, amount] = e.asV900
+    decode(event: Event) {
+        if (parachainStaking.rewarded.v900.is(event)) {
+            const [account, amount] =
+                parachainStaking.rewarded.v900.decode(event)
             return {
                 account,
                 amount,
             }
-        } else if (e.isV1300) {
-            const {account, rewards: amount} = e.asV1300
+        } else if (parachainStaking.rewarded.v1300.is(event)) {
+            const {account, rewards: amount} =
+                parachainStaking.rewarded.v1300.decode(event)
             return {
                 account,
                 amount,
             }
         } else {
-            throw new UnknownVersionError(e)
+            throw new UnknownVersionError(event)
         }
     },
 }
 
 export const Compounded = {
-    decode(ctx: ChainContext, event: Event) {
-        const e = new ParachainStakingCompoundedEvent(ctx, event)
-        if (e.isV1901) {
-            const {delegator: account, amount} = e.asV1901
+    decode(event: Event) {
+        if (parachainStaking.compounded.v1901.is(event)) {
+            const {delegator: account, amount} =
+                parachainStaking.compounded.v1901.decode(event)
             return {
                 account,
                 amount,
             }
         } else {
-            throw new UnknownVersionError(e)
+            throw new UnknownVersionError(event)
         }
     },
 }

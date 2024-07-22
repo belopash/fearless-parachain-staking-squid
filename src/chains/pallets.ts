@@ -1,6 +1,6 @@
 namespace ParachainStaking {
     export type Delegation = {
-        owner: Uint8Array
+        owner: string
         amount: bigint
     }
 
@@ -13,7 +13,7 @@ namespace ParachainStaking {
     export interface DelegatorState {
         total: bigint
         delegations: {
-            owner: Uint8Array
+            owner: string
             amount: bigint
         }[]
     }
@@ -30,31 +30,31 @@ namespace ParachainStaking {
     }
 
     export type CandidateBondedLess = {
-        account: Uint8Array
+        account: string
         amount: bigint
         newTotal: bigint
     }
 
     export type CandidateBondedMore = {
-        account: Uint8Array
+        account: string
         amount: bigint
         newTotal: bigint
     }
 
     export type DelegationIncreased = {
-        account: Uint8Array
+        account: string
         amount: bigint
-        candidate: Uint8Array
+        candidate: string
     }
 
     export type DelegationDecreased = {
-        account: Uint8Array
+        account: string
         amount: bigint
-        candidate: Uint8Array
+        candidate: string
     }
 
     export type Rewarded = {
-        account: Uint8Array
+        account: string
         amount: bigint
     }
 }

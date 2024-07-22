@@ -1,9 +1,10 @@
 const config = {
     chainName: 'moonbeam',
     prefix: '',
-    dataSource: {
-        archive: 'https://moonbeam.archive.subsquid.io/graphql',
-        chain: process.env.MOONBEAM_CHAIN_NODE || 'wss://wss.api.moonbeam.network',
+    gateway: 'https://v2.archive.subsquid.io/network/moonbeam-substrate',
+    chain: {
+        url: process.env.MOONBEAM_CHAIN_NODE || 'wss://wss.api.moonbeam.network',
+        rateLimit: 10,
     },
     typesBundle: 'moonbeam',
 }

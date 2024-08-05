@@ -2,17 +2,16 @@ import {assertNotNull} from '@subsquid/substrate-processor'
 import assert from 'assert'
 import {UnknownVersionError} from '../../../../../utils/errors'
 import {storage} from '../../../types'
-import {BatchContext, BlockHeader} from '../../../../fields'
+import {BlockHeader} from '../../../../fields'
 
 export const CandidateInfo = {
     async getMany(
-        ctx: BatchContext,
         block: BlockHeader,
         addresses: string[]
     ): Promise<(ParachainStaking.CandidateState | undefined)[] | undefined> {
-        
-        
-        if (!storage.parachainStaking.candidateInfo.isExists(block)) return CandidateState.getMany(ctx, block, addresses)
+
+        if (!storage.parachainStaking.candidateInfo.isExists(block)) return CandidateState.getMany(block, addresses)
+
         const bonds: (bigint | undefined)[] =
             await storage.parachainStaking.candidateInfo.at(block, async (s, v) => {
                 switch (v) {
@@ -24,7 +23,7 @@ export const CandidateInfo = {
             })
 
         assert(storage.parachainStaking.topDelegations.isExists(block))
-        let topDelegations: (ParachainStaking.Delegation[] | undefined)[] =
+        const topDelegations: (ParachainStaking.Delegation[] | undefined)[] =
             await storage.parachainStaking.topDelegations.at(block, async (s, v) => {
                 switch (v) {
                     case 'v1201':
@@ -35,7 +34,7 @@ export const CandidateInfo = {
             })
 
         assert(storage.parachainStaking.bottomDelegations.isExists(block))
-        let bottomDelegations: (ParachainStaking.Delegation[] | undefined)[] =
+        const bottomDelegations: (ParachainStaking.Delegation[] | undefined)[] =
             await storage.parachainStaking.bottomDelegations.at(block, async (s, v) => {
                 switch (v) {
                     case 'v1201':
@@ -67,19 +66,21 @@ export const CandidateInfo = {
  */
 export const CandidateState = {
     async getMany(
-        ctx: BatchContext,
         block: BlockHeader,
         addresses: string[]
     ): Promise<(ParachainStaking.CandidateState | undefined)[] | undefined> {
-        const pscss = new ParachainStakingCandidateStateStorage(ctx, block)
-        if (!pscss.isExists) return CollatorState2.getMany(ctx, block, addresses)
 
-        let states: (ParachainStaking.CandidateState | undefined)[]
-        if (pscss.isV1001) {
-            states = await pscss.asV1001.getMany(addresses)
-        } else {
-            throw new UnknownVersionError(pscss)
-        }
+        if (!storage.parachainStaking.candidateState.isExists(block)) return CollatorState2.getMany(block, addresses)
+
+        const states: (ParachainStaking.CandidateState | undefined)[] =
+            await storage.parachainStaking.candidateState.at(block, async (s, v) => {
+                switch (v) {
+                    case 'v1001':
+                        return await s.getMany(addresses)
+                    default:
+                        throw new UnknownVersionError(v)
+                }
+            })
 
         return states
     },
@@ -90,30 +91,30 @@ export const CandidateState = {
  */
 export const CollatorState2 = {
     async getMany(
-        ctx: BatchContext,
         block: BlockHeader,
         addresses: string[]
     ): Promise<(ParachainStaking.CandidateState | undefined)[] | undefined> {
-        const pscs2s = new ParachainStakingCollatorState2Storage(ctx, block)
-        if (!pscs2s.isExists) return undefined
 
-        let states: (ParachainStaking.CandidateState | undefined)[] = []
-        if (pscs2s.isV900) {
-            const r = await pscs2s.asV900.getMany(addresses)
-            for (let state of r) {
-                states.push(
-                    state == null
-                        ? undefined
-                        : {
-                              bond: state.bond,
-                              topDelegations: state.topNominators,
-                              bottomDelegations: state.bottomNominators,
-                          }
-                )
-            }
-        } else {
-            throw new UnknownVersionError(pscs2s)
-        }
+        if (!storage.parachainStaking.collatorState2.isExists(block)) return undefined
+
+        const states: (ParachainStaking.CandidateState | undefined)[] =
+            await storage.parachainStaking.collatorState2.at(block, async (s, v) => {
+                switch (v) {
+                    case 'v900':
+                        return (await s.getMany(addresses)).map(state => {
+                            return state == null
+                                ? undefined
+                                : {
+                                    bond: state.bond,
+                                    topDelegations: state.topNominators,
+                                    bottomDelegations: state.bottomNominators,
+                                  }    
+                        })
+                    default:
+                        throw new UnknownVersionError(v)
+                }
+
+            }) 
 
         return states
     },

@@ -1,29 +1,36 @@
 import {UnknownVersionError} from '../../../../../utils/errors'
-import {parachainStaking} from '../../../types/storage'
-import {BatchContext, BlockHeader} from '../../../../fields'
+import {storage} from '../../../types'
+import {BlockHeader} from '../../../../fields'
 
 export const Round = {
-    async get(ctx: BatchContext, block: BlockHeader): Promise<ParachainStaking.Round | undefined> {
-        const psrs = new ParachainStakingRoundStorage(ctx, block)
-        if (!psrs.isExists) return undefined
+    async get(block: BlockHeader): Promise<ParachainStaking.Round | undefined> {
 
-        if (psrs.isV900) {
-            return await psrs.asV900.get()
-        } else {
-            throw new UnknownVersionError(psrs)
-        }
+        if (!storage.parachainStaking.round.isExists(block)) return undefined
+
+        return await storage.parachainStaking.round.at(block, async (s, v) => {
+            switch (v) {
+                case 'v900':
+                case 'v2801':
+                    return await s.get()
+                default:
+                    throw new UnknownVersionError(v)
+            }
+        })
     },
 }
 
 export const CollatorComission = {
-    async get(ctx: BatchContext, block: BlockHeader): Promise<number | undefined> {
-        const psrs = new ParachainStakingCollatorCommissionStorage(ctx, block)
-        if (!psrs.isExists) return undefined
+    async get(block: BlockHeader): Promise<number | undefined> {
 
-        if (psrs.isV900) {
-            return await psrs.asV900.get()
-        } else {
-            throw new UnknownVersionError(psrs)
-        }
-    },
+        if (!storage.parachainStaking.collatorCommission.isExists(block)) return undefined
+
+        return await storage.parachainStaking.collatorCommission.at(block, async (s, v) => {
+             switch (v) {
+                case 'v900':
+                    return await s.get()
+                default:
+                    throw new UnknownVersionError(v)
+             }
+        })
+    }
 }

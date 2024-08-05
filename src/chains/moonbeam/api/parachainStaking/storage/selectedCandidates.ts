@@ -1,16 +1,19 @@
 import {UnknownVersionError} from '../../../../../utils/errors'
-import {parachainStaking} from '../../../types/storage'
-import {BatchContext, BlockHeader} from '../../../../fields'
+import {storage} from '../../../types'
+import {BlockHeader} from '../../../../fields'
 
 export const SelectedCandidates = {
-    async get(ctx: BatchContext, block: BlockHeader): Promise<Uint8Array[] | undefined> {
-        const psscs = new ParachainStakingSelectedCandidatesStorage(ctx, block)
-        if (!psscs.isExists) return undefined
+    async get(block: BlockHeader): Promise<string[] | undefined> {
 
-        if (psscs.isV900) {
-            return await psscs.asV900.get()
-        } else {
-            throw new UnknownVersionError(psscs)
-        }
+        if (!storage.parachainStaking.selectedCandidates.isExists(block)) return undefined
+
+        return await storage.parachainStaking.selectedCandidates.at(block, async (s, v) => {
+            switch (v) {
+                case 'v900':
+                    return await s.get()
+                default:
+                    throw new UnknownVersionError(v)
+            }
+        })
     },
 }

@@ -1,11 +1,8 @@
-import {sts, Block, Bytes, Option, Result, ConstantType, RuntimeCtx} from '../support'
+import {sts, Block, Bytes, Option, Result, ConstantType, constant as constant_, RuntimeCtx} from '../support'
 
-export const rewardPaymentDelay =  {
+export const rewardPaymentDelay = constant_('ParachainStaking.RewardPaymentDelay', {
     /**
      *  Number of rounds after which block authors are rewarded
      */
-    v900: new ConstantType(
-        'ParachainStaking.RewardPaymentDelay',
-        sts.number()
-    ),
-}
+    v900: sts.number(),
+})

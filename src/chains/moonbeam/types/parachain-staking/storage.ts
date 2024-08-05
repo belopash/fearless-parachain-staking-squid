@@ -1,279 +1,155 @@
-import {sts, Block, Bytes, Option, Result, StorageType, RuntimeCtx} from '../support'
+import {sts, Block, Bytes, Option, Result, StorageType, storage as storage_, RuntimeCtx, GetStorageType} from '../support'
 import * as v900 from '../v900'
 import * as v1001 from '../v1001'
 import * as v1201 from '../v1201'
 import * as v1502 from '../v1502'
 import * as v2801 from '../v2801'
 
-export const collatorCommission =  {
+export const collatorCommission = storage_('ParachainStaking.collatorCommission', {
     /**
      *  Commission percent taken off of rewards for all collators
      */
-    v900: new StorageType('ParachainStaking.CollatorCommission', 'Default', [], v900.Perbill) as CollatorCommissionV900,
-}
+    v900: {key: [], value: v900.Perbill, modifier: 'Default', isKeyDecodable: true} as const,
+})
 
 /**
  *  Commission percent taken off of rewards for all collators
  */
-export interface CollatorCommissionV900  {
-    is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v900.Perbill
-    get(block: Block): Promise<(v900.Perbill | undefined)>
-}
+export type CollatorCommissionV900 = GetStorageType<[], v900.Perbill, 'Default', true>
 
-export const round =  {
+export const round = storage_('ParachainStaking.round', {
     /**
      *  Current round index and next round scheduled transition
      */
-    v900: new StorageType('ParachainStaking.Round', 'Default', [], v900.RoundInfo) as RoundV900,
+    v900: {key: [], value: v900.RoundInfo, modifier: 'Default', isKeyDecodable: true} as const,
     /**
      *  Current round index and next round scheduled transition
      */
-    v2801: new StorageType('ParachainStaking.Round', 'Default', [], v2801.RoundInfo) as RoundV2801,
-}
+    v2801: {key: [], value: v2801.RoundInfo, modifier: 'Default', isKeyDecodable: true} as const,
+})
 
 /**
  *  Current round index and next round scheduled transition
  */
-export interface RoundV900  {
-    is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v900.RoundInfo
-    get(block: Block): Promise<(v900.RoundInfo | undefined)>
-}
+export type RoundV900 = GetStorageType<[], v900.RoundInfo, 'Default', true>
 
 /**
  *  Current round index and next round scheduled transition
  */
-export interface RoundV2801  {
-    is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v2801.RoundInfo
-    get(block: Block): Promise<(v2801.RoundInfo | undefined)>
-}
+export type RoundV2801 = GetStorageType<[], v2801.RoundInfo, 'Default', true>
 
-export const nominatorState2 =  {
+export const nominatorState2 = storage_('ParachainStaking.nominatorState2', {
     /**
      *  Get nominator state associated with an account if account is nominating else None
      */
-    v900: new StorageType('ParachainStaking.NominatorState2', 'Optional', [v900.H160], v900.Nominator2) as NominatorState2V900,
+    v900: {key: [v900.H160], value: v900.Nominator2, modifier: 'Optional', isKeyDecodable: true} as const,
     /**
      *  DEPRECATED in favor of DelegatorState
      *  Get nominator state associated with an account if account is nominating else None
      */
-    v1001: new StorageType('ParachainStaking.NominatorState2', 'Optional', [v1001.AccountId20], v1001.Nominator2) as NominatorState2V1001,
-}
+    v1001: {key: [v1001.AccountId20], value: v1001.Nominator2, modifier: 'Optional', isKeyDecodable: true} as const,
+})
 
 /**
  *  Get nominator state associated with an account if account is nominating else None
  */
-export interface NominatorState2V900  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v900.H160): Promise<(v900.Nominator2 | undefined)>
-    getMany(block: Block, keys: v900.H160[]): Promise<(v900.Nominator2 | undefined)[]>
-    getKeys(block: Block): Promise<v900.H160[]>
-    getKeys(block: Block, key: v900.H160): Promise<v900.H160[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v900.H160[]>
-    getKeysPaged(pageSize: number, block: Block, key: v900.H160): AsyncIterable<v900.H160[]>
-    getPairs(block: Block): Promise<[k: v900.H160, v: (v900.Nominator2 | undefined)][]>
-    getPairs(block: Block, key: v900.H160): Promise<[k: v900.H160, v: (v900.Nominator2 | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v900.H160, v: (v900.Nominator2 | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v900.H160): AsyncIterable<[k: v900.H160, v: (v900.Nominator2 | undefined)][]>
-}
+export type NominatorState2V900 = GetStorageType<[key: v900.H160], v900.Nominator2, 'Optional', true>
 
 /**
  *  DEPRECATED in favor of DelegatorState
  *  Get nominator state associated with an account if account is nominating else None
  */
-export interface NominatorState2V1001  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v1001.AccountId20): Promise<(v1001.Nominator2 | undefined)>
-    getMany(block: Block, keys: v1001.AccountId20[]): Promise<(v1001.Nominator2 | undefined)[]>
-    getKeys(block: Block): Promise<v1001.AccountId20[]>
-    getKeys(block: Block, key: v1001.AccountId20): Promise<v1001.AccountId20[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v1001.AccountId20[]>
-    getKeysPaged(pageSize: number, block: Block, key: v1001.AccountId20): AsyncIterable<v1001.AccountId20[]>
-    getPairs(block: Block): Promise<[k: v1001.AccountId20, v: (v1001.Nominator2 | undefined)][]>
-    getPairs(block: Block, key: v1001.AccountId20): Promise<[k: v1001.AccountId20, v: (v1001.Nominator2 | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v1001.AccountId20, v: (v1001.Nominator2 | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v1001.AccountId20): AsyncIterable<[k: v1001.AccountId20, v: (v1001.Nominator2 | undefined)][]>
-}
+export type NominatorState2V1001 = GetStorageType<[key: v1001.AccountId20], v1001.Nominator2, 'Optional', true>
 
-export const collatorState2 =  {
+export const collatorState2 = storage_('ParachainStaking.collatorState2', {
     /**
      *  Get collator state associated with an account if account is collating else None
      */
-    v900: new StorageType('ParachainStaking.CollatorState2', 'Optional', [v900.H160], v900.Collator2) as CollatorState2V900,
-}
+    v900: {key: [v900.H160], value: v900.Collator2, modifier: 'Optional', isKeyDecodable: true} as const,
+})
 
 /**
  *  Get collator state associated with an account if account is collating else None
  */
-export interface CollatorState2V900  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v900.H160): Promise<(v900.Collator2 | undefined)>
-    getMany(block: Block, keys: v900.H160[]): Promise<(v900.Collator2 | undefined)[]>
-    getKeys(block: Block): Promise<v900.H160[]>
-    getKeys(block: Block, key: v900.H160): Promise<v900.H160[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v900.H160[]>
-    getKeysPaged(pageSize: number, block: Block, key: v900.H160): AsyncIterable<v900.H160[]>
-    getPairs(block: Block): Promise<[k: v900.H160, v: (v900.Collator2 | undefined)][]>
-    getPairs(block: Block, key: v900.H160): Promise<[k: v900.H160, v: (v900.Collator2 | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v900.H160, v: (v900.Collator2 | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v900.H160): AsyncIterable<[k: v900.H160, v: (v900.Collator2 | undefined)][]>
-}
+export type CollatorState2V900 = GetStorageType<[key: v900.H160], v900.Collator2, 'Optional', true>
 
-export const selectedCandidates =  {
+export const selectedCandidates = storage_('ParachainStaking.selectedCandidates', {
     /**
      *  The collator candidates selected for the current round
      */
-    v900: new StorageType('ParachainStaking.SelectedCandidates', 'Default', [], sts.array(() => v900.H160)) as SelectedCandidatesV900,
-}
+    v900: {key: [], value: sts.array(() => v900.H160), modifier: 'Default', isKeyDecodable: true} as const,
+})
 
 /**
  *  The collator candidates selected for the current round
  */
-export interface SelectedCandidatesV900  {
-    is(block: RuntimeCtx): boolean
-    getDefault(block: Block): v900.H160[]
-    get(block: Block): Promise<(v900.H160[] | undefined)>
-}
+export type SelectedCandidatesV900 = GetStorageType<[], v900.H160[], 'Default', true>
 
-export const delegatorState =  {
+export const delegatorState = storage_('ParachainStaking.delegatorState', {
     /**
      *  Get delegator state associated with an account if account is delegating else None
      */
-    v1001: new StorageType('ParachainStaking.DelegatorState', 'Optional', [v1001.AccountId20], v1001.Delegator) as DelegatorStateV1001,
+    v1001: {key: [v1001.AccountId20], value: v1001.Delegator, modifier: 'Optional', isKeyDecodable: true} as const,
     /**
      *  Get delegator state associated with an account if account is delegating else None
      */
-    v1502: new StorageType('ParachainStaking.DelegatorState', 'Optional', [v1502.AccountId20], v1502.Delegator) as DelegatorStateV1502,
-}
+    v1502: {key: [v1502.AccountId20], value: v1502.Delegator, modifier: 'Optional', isKeyDecodable: true} as const,
+})
 
 /**
  *  Get delegator state associated with an account if account is delegating else None
  */
-export interface DelegatorStateV1001  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v1001.AccountId20): Promise<(v1001.Delegator | undefined)>
-    getMany(block: Block, keys: v1001.AccountId20[]): Promise<(v1001.Delegator | undefined)[]>
-    getKeys(block: Block): Promise<v1001.AccountId20[]>
-    getKeys(block: Block, key: v1001.AccountId20): Promise<v1001.AccountId20[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v1001.AccountId20[]>
-    getKeysPaged(pageSize: number, block: Block, key: v1001.AccountId20): AsyncIterable<v1001.AccountId20[]>
-    getPairs(block: Block): Promise<[k: v1001.AccountId20, v: (v1001.Delegator | undefined)][]>
-    getPairs(block: Block, key: v1001.AccountId20): Promise<[k: v1001.AccountId20, v: (v1001.Delegator | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v1001.AccountId20, v: (v1001.Delegator | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v1001.AccountId20): AsyncIterable<[k: v1001.AccountId20, v: (v1001.Delegator | undefined)][]>
-}
+export type DelegatorStateV1001 = GetStorageType<[key: v1001.AccountId20], v1001.Delegator, 'Optional', true>
 
 /**
  *  Get delegator state associated with an account if account is delegating else None
  */
-export interface DelegatorStateV1502  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v1502.AccountId20): Promise<(v1502.Delegator | undefined)>
-    getMany(block: Block, keys: v1502.AccountId20[]): Promise<(v1502.Delegator | undefined)[]>
-    getKeys(block: Block): Promise<v1502.AccountId20[]>
-    getKeys(block: Block, key: v1502.AccountId20): Promise<v1502.AccountId20[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v1502.AccountId20[]>
-    getKeysPaged(pageSize: number, block: Block, key: v1502.AccountId20): AsyncIterable<v1502.AccountId20[]>
-    getPairs(block: Block): Promise<[k: v1502.AccountId20, v: (v1502.Delegator | undefined)][]>
-    getPairs(block: Block, key: v1502.AccountId20): Promise<[k: v1502.AccountId20, v: (v1502.Delegator | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v1502.AccountId20, v: (v1502.Delegator | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v1502.AccountId20): AsyncIterable<[k: v1502.AccountId20, v: (v1502.Delegator | undefined)][]>
-}
+export type DelegatorStateV1502 = GetStorageType<[key: v1502.AccountId20], v1502.Delegator, 'Optional', true>
 
-export const candidateState =  {
+export const candidateState = storage_('ParachainStaking.candidateState', {
     /**
      *  Get collator candidate state associated with an account if account is a candidate else None
      */
-    v1001: new StorageType('ParachainStaking.CandidateState', 'Optional', [v1001.AccountId20], v1001.CollatorCandidate) as CandidateStateV1001,
-}
+    v1001: {key: [v1001.AccountId20], value: v1001.CollatorCandidate, modifier: 'Optional', isKeyDecodable: true} as const,
+})
 
 /**
  *  Get collator candidate state associated with an account if account is a candidate else None
  */
-export interface CandidateStateV1001  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v1001.AccountId20): Promise<(v1001.CollatorCandidate | undefined)>
-    getMany(block: Block, keys: v1001.AccountId20[]): Promise<(v1001.CollatorCandidate | undefined)[]>
-    getKeys(block: Block): Promise<v1001.AccountId20[]>
-    getKeys(block: Block, key: v1001.AccountId20): Promise<v1001.AccountId20[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v1001.AccountId20[]>
-    getKeysPaged(pageSize: number, block: Block, key: v1001.AccountId20): AsyncIterable<v1001.AccountId20[]>
-    getPairs(block: Block): Promise<[k: v1001.AccountId20, v: (v1001.CollatorCandidate | undefined)][]>
-    getPairs(block: Block, key: v1001.AccountId20): Promise<[k: v1001.AccountId20, v: (v1001.CollatorCandidate | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v1001.AccountId20, v: (v1001.CollatorCandidate | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v1001.AccountId20): AsyncIterable<[k: v1001.AccountId20, v: (v1001.CollatorCandidate | undefined)][]>
-}
+export type CandidateStateV1001 = GetStorageType<[key: v1001.AccountId20], v1001.CollatorCandidate, 'Optional', true>
 
-export const candidateInfo =  {
+export const candidateInfo = storage_('ParachainStaking.candidateInfo', {
     /**
      *  Get collator candidate info associated with an account if account is candidate else None
      */
-    v1201: new StorageType('ParachainStaking.CandidateInfo', 'Optional', [v1201.AccountId20], v1201.CandidateMetadata) as CandidateInfoV1201,
-}
+    v1201: {key: [v1201.AccountId20], value: v1201.CandidateMetadata, modifier: 'Optional', isKeyDecodable: true} as const,
+})
 
 /**
  *  Get collator candidate info associated with an account if account is candidate else None
  */
-export interface CandidateInfoV1201  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v1201.AccountId20): Promise<(v1201.CandidateMetadata | undefined)>
-    getMany(block: Block, keys: v1201.AccountId20[]): Promise<(v1201.CandidateMetadata | undefined)[]>
-    getKeys(block: Block): Promise<v1201.AccountId20[]>
-    getKeys(block: Block, key: v1201.AccountId20): Promise<v1201.AccountId20[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v1201.AccountId20[]>
-    getKeysPaged(pageSize: number, block: Block, key: v1201.AccountId20): AsyncIterable<v1201.AccountId20[]>
-    getPairs(block: Block): Promise<[k: v1201.AccountId20, v: (v1201.CandidateMetadata | undefined)][]>
-    getPairs(block: Block, key: v1201.AccountId20): Promise<[k: v1201.AccountId20, v: (v1201.CandidateMetadata | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v1201.AccountId20, v: (v1201.CandidateMetadata | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v1201.AccountId20): AsyncIterable<[k: v1201.AccountId20, v: (v1201.CandidateMetadata | undefined)][]>
-}
+export type CandidateInfoV1201 = GetStorageType<[key: v1201.AccountId20], v1201.CandidateMetadata, 'Optional', true>
 
-export const topDelegations =  {
+export const topDelegations = storage_('ParachainStaking.topDelegations', {
     /**
      *  Top delegations for collator candidate
      */
-    v1201: new StorageType('ParachainStaking.TopDelegations', 'Optional', [v1201.AccountId20], v1201.Delegations) as TopDelegationsV1201,
-}
+    v1201: {key: [v1201.AccountId20], value: v1201.Delegations, modifier: 'Optional', isKeyDecodable: true} as const,
+})
 
 /**
  *  Top delegations for collator candidate
  */
-export interface TopDelegationsV1201  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v1201.AccountId20): Promise<(v1201.Delegations | undefined)>
-    getMany(block: Block, keys: v1201.AccountId20[]): Promise<(v1201.Delegations | undefined)[]>
-    getKeys(block: Block): Promise<v1201.AccountId20[]>
-    getKeys(block: Block, key: v1201.AccountId20): Promise<v1201.AccountId20[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v1201.AccountId20[]>
-    getKeysPaged(pageSize: number, block: Block, key: v1201.AccountId20): AsyncIterable<v1201.AccountId20[]>
-    getPairs(block: Block): Promise<[k: v1201.AccountId20, v: (v1201.Delegations | undefined)][]>
-    getPairs(block: Block, key: v1201.AccountId20): Promise<[k: v1201.AccountId20, v: (v1201.Delegations | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v1201.AccountId20, v: (v1201.Delegations | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v1201.AccountId20): AsyncIterable<[k: v1201.AccountId20, v: (v1201.Delegations | undefined)][]>
-}
+export type TopDelegationsV1201 = GetStorageType<[key: v1201.AccountId20], v1201.Delegations, 'Optional', true>
 
-export const bottomDelegations =  {
+export const bottomDelegations = storage_('ParachainStaking.bottomDelegations', {
     /**
      *  Bottom delegations for collator candidate
      */
-    v1201: new StorageType('ParachainStaking.BottomDelegations', 'Optional', [v1201.AccountId20], v1201.Delegations) as BottomDelegationsV1201,
-}
+    v1201: {key: [v1201.AccountId20], value: v1201.Delegations, modifier: 'Optional', isKeyDecodable: true} as const,
+})
 
 /**
  *  Bottom delegations for collator candidate
  */
-export interface BottomDelegationsV1201  {
-    is(block: RuntimeCtx): boolean
-    get(block: Block, key: v1201.AccountId20): Promise<(v1201.Delegations | undefined)>
-    getMany(block: Block, keys: v1201.AccountId20[]): Promise<(v1201.Delegations | undefined)[]>
-    getKeys(block: Block): Promise<v1201.AccountId20[]>
-    getKeys(block: Block, key: v1201.AccountId20): Promise<v1201.AccountId20[]>
-    getKeysPaged(pageSize: number, block: Block): AsyncIterable<v1201.AccountId20[]>
-    getKeysPaged(pageSize: number, block: Block, key: v1201.AccountId20): AsyncIterable<v1201.AccountId20[]>
-    getPairs(block: Block): Promise<[k: v1201.AccountId20, v: (v1201.Delegations | undefined)][]>
-    getPairs(block: Block, key: v1201.AccountId20): Promise<[k: v1201.AccountId20, v: (v1201.Delegations | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block): AsyncIterable<[k: v1201.AccountId20, v: (v1201.Delegations | undefined)][]>
-    getPairsPaged(pageSize: number, block: Block, key: v1201.AccountId20): AsyncIterable<[k: v1201.AccountId20, v: (v1201.Delegations | undefined)][]>
-}
+export type BottomDelegationsV1201 = GetStorageType<[key: v1201.AccountId20], v1201.Delegations, 'Optional', true>

@@ -35,7 +35,7 @@ processor.run(database, async (ctx) => {
     const stakingData = await getStakingData(ctx)
     await processStaking(ctx, {
         stakingData,
-        rewardPaymentDelay: ParachainStaking.constants.RewardPaymentDelay.get(ctx),
+        rewardPaymentDelay: ParachainStaking.constants.RewardPaymentDelay.get(ctx.blocks[0].header),
         startRoundIndex: await getStartRound(ctx),
     })
 })
@@ -48,10 +48,10 @@ async function getRoundsData(ctx: BatchContext): Promise<RoundData[]> {
             if (event.name === 'ParachainStaking.NewRound') {
                 const e = ParachainStaking.events.NewRound.decode(event)
 
-                const candidateIds = await ParachainStaking.storage.SelectedCandidates.get(ctx, block)
+                const candidateIds = await ParachainStaking.storage.SelectedCandidates.get(block)
                 assert(candidateIds != null)
 
-                const candidateStates = await ParachainStaking.storage.CandidateInfo.getMany(ctx, block, candidateIds)
+                const candidateStates = await ParachainStaking.storage.CandidateInfo.getMany(block, candidateIds)
                 assert(candidateStates != null)
 
                 const delegatorIds: string[] = []
@@ -81,7 +81,7 @@ async function getRoundsData(ctx: BatchContext): Promise<RoundData[]> {
                     })
                 }
 
-                const delegatorStates = await ParachainStaking.storage.DelegatorState.getMany(ctx, block, delegatorIds)
+                const delegatorStates = await ParachainStaking.storage.DelegatorState.getMany(block, delegatorIds)
                 assert(delegatorStates != null)
 
                 const candidateDelegators: Delegator[] = []
@@ -100,7 +100,7 @@ async function getRoundsData(ctx: BatchContext): Promise<RoundData[]> {
                     })
                 }
 
-                const collatorComission = await ParachainStaking.storage.CollatorComission.get(ctx, block)
+                const collatorComission = await ParachainStaking.storage.CollatorComission.get(block)
                 assert(collatorComission != null)
 
                 roundsData.push({
@@ -121,7 +121,7 @@ async function getRoundsData(ctx: BatchContext): Promise<RoundData[]> {
 }
 
 async function getStartRound(ctx: BatchContext) {
-    const round = await ParachainStaking.storage.Round.get(ctx, ctx.blocks[0].header)
+    const round = await ParachainStaking.storage.Round.get(ctx.blocks[0].header)
     assert(round != null)
     return round.current
 }

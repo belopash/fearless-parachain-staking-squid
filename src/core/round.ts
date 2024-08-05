@@ -1,6 +1,6 @@
 import assert from 'assert'
 import {In} from 'typeorm'
-import {BatchContext} from '@subsquid/substrate-processor'
+import {DataHandlerContext} from '@subsquid/substrate-processor'
 import {Store} from '@subsquid/typeorm-store'
 import {Round, RoundCollator, RoundNomination, RoundNominator, Staker} from '../model'
 import {toEntityMap} from '../utils/misc'
@@ -39,7 +39,7 @@ export type RoundData = {
     collatorComission: number
 }
 
-export async function processRounds(ctx: BatchContext<Store, unknown>, roundsData: RoundData[]): Promise<void> {
+export async function processRounds(ctx: DataHandlerContext<Store, any>, roundsData: RoundData[]): Promise<void> {
     const stakerIds = new Set<string>()
     for (const data of roundsData) {
         for (const c of data.selectedCandidates) {

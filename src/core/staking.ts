@@ -1,6 +1,6 @@
 import assert from 'assert'
 import {In, MoreThanOrEqual} from 'typeorm'
-import {BatchContext} from '@subsquid/substrate-processor'
+import {DataHandlerContext} from '@subsquid/substrate-processor'
 import {Store} from '@subsquid/typeorm-store'
 import {Collator, Delegator, HistoryElement, Reward, Round, RoundCollator, Staker} from '../model'
 import {splitIntoBatches, toEntityMap} from '../utils/misc'
@@ -49,7 +49,7 @@ type CompoundData = {
 export type StakingData = BondData | DelegationData | RewardData | CompoundData
 
 export async function processStaking(
-    ctx: BatchContext<Store, unknown>,
+    ctx: DataHandlerContext<Store, any>,
     data: {
         startRoundIndex: number
         stakingData: StakingData[]
